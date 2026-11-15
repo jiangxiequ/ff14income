@@ -61,6 +61,9 @@ class MonthlyGameManager {
                 { id: 6, name: '沉船手镯', price: 9000, fixed: true, icon: './icons/sz.webp' },
                 { id: 7, name: '上等沉船戒指', price: 27000, fixed: true, icon: './icons/jzhq.webp' },
                 { id: 8, name: '沉船戒指', price: 8000, fixed: true, icon: './icons/jz.webp' },
+                { id: 9, name: '宝石nq(2gil)', price: 2, fixed: true, icon: './icons/bsnq.webp' },
+                { id: 10, name: '宝石hq/nq(3gil)', price: 3, fixed: true, icon: './icons/bshq.webp' },
+                { id: 11, name: '星红/蓝石hq(4gil)', price: 4, fixed: true, icon: './icons/xhlhq.webp' },
             ];
         }
     }
