@@ -235,20 +235,47 @@ class MonthlyGameManager {
         }
     }
 
-    switchToMonth(month) {
+        switchToMonth(month) {
         if (!this.allData[month]) {
-            // 如果月份不存在，提示并创建
             if (confirm(`月份 ${this.getMonthLabel(month)} 不存在，是否创建？`)) {
                 this.initMonth(month);
             } else {
-                // 取消则切换到当前月份
                 this.switchToMonth(this.getCurrentMonth());
             }
             return;
         }
         
         this.currentMonth = month;
-        this.currentItems = this.allData[month].items || [];
+        let items = this.allData[month].items || [];
+
+        // ===== 新增：自动补齐和更新固定物品 =====
+        let hasChanges = false;
+        FIXED_ITEMS.forEach(fixedItem => {
+            const existingItem = items.find(i => i.id === fixedItem.id && i.fixed);
+            if (!existingItem) {
+                // 如果老数据里没有这个新固定物品，加进去
+                items.push({ ...fixedItem, count: 0 });
+                hasChanges = true;
+            } else {
+                // 如果老数据里有，但名字、价格、图标变了，同步更新（但保留数量）
+                if (existingItem.name !== fixedItem.name || 
+                    existingItem.price !== fixedItem.price || 
+                    existingItem.icon !== fixedItem.icon) {
+                    existingItem.name = fixedItem.name;
+                    existingItem.price = fixedItem.price;
+                    existingItem.icon = fixedItem.icon;
+                    hasChanges = true;
+                }
+            }
+        });
+
+        if (hasChanges) {
+            this.allData[month].items = items;
+            this.saveToStorage(); // 更新完马上保存
+        }
+        // ==================================
+
+        this.currentItems = items;
         this.currentNextId = this.allData[month].nextId || 1;
         
         this.monthSelect.value = month;
