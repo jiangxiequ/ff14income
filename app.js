@@ -131,21 +131,26 @@ class MonthlyGameManager {
             count: 0
         }));
 
-        if (copyFrom && this.allData[copyFrom]) {
+                if (copyFrom && this.allData[copyFrom]) {
             const sourceItems = this.allData[copyFrom].items || [];
-            const customItems = sourceItems
-                .filter(item => !item.fixed)
-                .map(item => ({ ...item, id: this.getNextIdForMonth(month) }));
+            let nextId = Math.max(...baseItems.map(i => i.id), 0) + 1;
             
-            const fixedIds = new Set(baseItems.map(i => i.id));
-            const allItems = [
-                ...baseItems,
-                ...customItems.filter(i => !fixedIds.has(i.id))
-            ];
+            // 找出源月份中数量大于 0 的自定义物品
+            const customItems = sourceItems
+                .filter(item => !item.fixed && item.count > 0)
+                .map(item => {
+                    // 在这里给每一个复制过来的物品分配全新的唯一 ID
+                    return { 
+                        ...item, 
+                        id: nextId++ 
+                    };
+                });
+            
+            const allItems = [...baseItems, ...customItems];
             
             this.allData[month] = {
                 items: allItems,
-                nextId: Math.max(...allItems.map(i => i.id), 0) + 1
+                nextId: nextId
             };
         } else {
             this.allData[month] = {
@@ -640,27 +645,45 @@ class MonthlyGameManager {
             if (e.key === 'Enter') this.confirmNewMonth();
         });
 
-        // 拉取上月数据
+                // 拉取上月数据
         this.copyMonthBtn.addEventListener('click', () => {
             if (!this.currentMonth) return;
-            
-            // 1. 找到上个月
             const prevMonth = this.getAdjacentMonth(this.currentMonth, -1);
             
-            // 2. 检查上个月有没有数据
             if (!this.allData[prevMonth]) {
                 alert(`上个月 (${this.getMonthLabel(prevMonth)}) 还没有数据哦，请先记录上个月数据。`);
                 return;
             }
 
-            // 3. 如果当前月已经有数量不为 0 的数据了，提醒一下
-            const currentTotal = this.currentItems.reduce((sum, item) => sum + (item.count || 0), 0);
-            if (currentTotal > 0) {
-                if (!confirm(`当前月份 (${this.getMonthLabel(this.currentMonth)}) 已经有数据了，复制后会覆盖【固定项】外的数据，确定吗？`)) return;
+            const prevItems = this.allData[prevMonth].items || [];
+            // 筛选上个月有数量的自定义物品（固定项数量保留当前的，自定义项带过来）
+            const prevCustomItems = prevItems.filter(item => !item.fixed && item.count > 0);
+
+            if (prevCustomItems.length === 0) {
+                alert(`上个月 (${this.getMonthLabel(prevMonth)}) 没有自定义的掉落记录。`);
+                return;
             }
 
-            // 4. 执行复制：把上个月复制到当前月
-            this.initMonth(this.currentMonth, prevMonth);
+            if (!confirm(`将把上月有数量的自定义物品添加到当前月，确定吗？`)) return;
+
+            // 把上月自定义物品加过来，并生成全新的唯一 ID，避免冲突
+            let addedCount = 0;
+            prevCustomItems.forEach(pItem => {
+                // 检查当前月是否已经有同名物品，如果有，把数量累加
+                const existItem = this.currentItems.find(i => i.name === pItem.name && !i.fixed);
+                if (existItem) {
+                    existItem.count += pItem.count;
+                } else {
+                    this.currentItems.push({
+                        ...pItem,
+                        id: this.currentNextId++ // 分配全新的唯一ID
+                    });
+                }
+                addedCount++;
+            });
+
+            this.saveMonthData();
+            this.render();
         });
 
         // 删除月份
