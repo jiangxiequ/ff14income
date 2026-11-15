@@ -640,16 +640,27 @@ class MonthlyGameManager {
             if (e.key === 'Enter') this.confirmNewMonth();
         });
 
-        // 复制上月
+        // 拉取上月数据
         this.copyMonthBtn.addEventListener('click', () => {
-            const months = this.getAvailableMonths();
-            if (months.length === 0) {
-                alert('没有可复制的月份数据，请先创建一个月');
+            if (!this.currentMonth) return;
+            
+            // 1. 找到上个月
+            const prevMonth = this.getAdjacentMonth(this.currentMonth, -1);
+            
+            // 2. 检查上个月有没有数据
+            if (!this.allData[prevMonth]) {
+                alert(`上个月 (${this.getMonthLabel(prevMonth)}) 还没有数据哦，请先记录上个月数据。`);
                 return;
             }
-            // 默认复制最近的一个月
-            const sourceMonth = months[months.length - 1];
-            this.copyMonth(sourceMonth);
+
+            // 3. 如果当前月已经有数量不为 0 的数据了，提醒一下
+            const currentTotal = this.currentItems.reduce((sum, item) => sum + (item.count || 0), 0);
+            if (currentTotal > 0) {
+                if (!confirm(`当前月份 (${this.getMonthLabel(this.currentMonth)}) 已经有数据了，拉取会覆盖当前数据，确定吗？`)) return;
+            }
+
+            // 4. 执行复制：把上个月复制到当前月
+            this.initMonth(this.currentMonth, prevMonth);
         });
 
         // 删除月份
