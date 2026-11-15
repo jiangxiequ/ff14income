@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📊游戏月度收益结算器</title>
+    <!-- 引入 Font Awesome 图标库 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- 引入外部样式 -->
+    <link rel="stylesheet" href="style.css">
+    <!-- 引入外部 JSON 配置 (通过 fetch 加载) -->
+</head>
+<body>
+    <div class="container">
+        <h1>
+            月度收益结算
+            <small>按月追踪 · 历史对比</small>
+        </h1>
+
+        <!-- 月份切换栏 -->
+        <div class="month-bar">
+            <span class="month-label">📅</span>
+            <select id="monthSelect"></select>
+            <div class="month-nav">
+                <button id="prevMonthBtn" title="上个月">◀</button>
+                <button id="nextMonthBtn" title="下个月">▶</button>
+                <button id="todayMonthBtn" title="回到本月">📆</button>
+            </div>
+            <div class="month-actions">
+                <button class="btn btn-success" id="newMonthBtn">➕ 新建月份</button>
+                <button class="btn btn-secondary" id="copyMonthBtn">📋 复制上月</button>
+                <button class="btn btn-danger" id="deleteMonthBtn">🗑️ 删除月份</button>
+            </div>
+        </div>
+
+        <!-- 输入表单 -->
+        <div class="form-row">
+            <input type="text" id="itemName" placeholder="道具名称" />
+            <input type="number" id="itemPrice" placeholder="单价" min="0" step="0.01" />
+            <input type="number" id="itemCount" placeholder="数量" min="1" value="1" />
+            <button class="btn btn-primary" id="addBtn">➕ 添加掉落</button>
+            <button class="btn btn-secondary" id="resetMonthBtn">🔄 重置当月</button>
+        </div>
+
+        <!-- 统计 -->
+        <div class="stats" id="statsPanel">
+            <div class="stat-item month-label-stat">📆 <span id="currentMonthDisplay">--</span></div>
+            <div class="stat-item">📦 道具种类 <span id="totalTypes">0</span></div>
+            <div class="stat-item">🔢 总数量 <span id="totalCount">0</span></div>
+            <div class="stat-item gold">💰 总价值 <span id="totalValue">0</span></div>
+            <div class="stat-item highlight">📊 可读价值 <span id="formattedValue">0</span></div>
+        </div>
+
+        <!-- 列表 -->
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>名称</th>
+                        <th>单价</th>
+                        <th>数量</th>
+                        <th>小计</th>
+                        <th>可读小计</th>
+                        <th style="text-align:right;">操作</th>
+                    </tr>
+                </thead>
+                <tbody id="itemTableBody">
+                    <tr><td colspan="6" class="empty-msg">✨ 加载中...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- ===== 新建月份弹窗 ===== -->
+    <div class="modal-overlay" id="newMonthModal">
+        <div class="modal">
+            <h2>📅 新建月份</h2>
+            <div class="form-group">
+                <label>
+                    年份
+                    <input type="number" id="modalYear" value="2026" min="2000" max="2100">
+                </label>
+                <label>
+                    月份
+                    <input type="number" id="modalMonth" value="7" min="1" max="12">
+                </label>
+            </div>
+            <div style="color:#7a8a9e; font-size:0.85rem; margin-bottom:1rem;">
+                💡 提示：如果该月份已存在，将覆盖原有数据
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" id="modalCancelBtn">取消</button>
+                <button class="btn btn-primary" id="modalConfirmBtn">✅ 创建</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 引入外部 JavaScript -->
+    <script src="app.js"></script>
+</body>
+</html>
