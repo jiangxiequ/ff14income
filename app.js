@@ -53,14 +53,14 @@ class MonthlyGameManager {
             console.warn('无法加载 fixed-items.json，使用内置默认配置', error);
             // 降级方案：内置默认配置
             FIXED_ITEMS = [
-                { id: 1, name: '上等沉船项链', price: 34500, fixed: true, icon: '📿' },
-                { id: 2, name: '沉船项链', price: 13000, fixed: true, icon: '📿' },
-                { id: 3, name: '上等沉船耳饰', price: 30000, fixed: true, icon: '💎' },
-                { id: 4, name: '沉船耳饰', price: 10000, fixed: true, icon: '💎' },
-                { id: 5, name: '上等沉船手镯', price: 28500, fixed: true, icon: '⌚' },
-                { id: 6, name: '沉船手镯', price: 9000, fixed: true, icon: '⌚' },
-                { id: 7, name: '上等沉船戒指', price: 27000, fixed: true, icon: '💍' },
-                { id: 8, name: '沉船戒指', price: 8000, fixed: true, icon: '💍' },
+                { id: 1, name: '上等沉船项链', price: 34500, fixed: true, icon: './icons/xlhq.webp' },
+                { id: 2, name: '沉船项链', price: 13000, fixed: true, icon: './icons/xl.webp' },
+                { id: 3, name: '上等沉船耳饰', price: 30000, fixed: true, icon: './icons/eshq.webp' },
+                { id: 4, name: '沉船耳饰', price: 10000, fixed: true, icon: './icons/es.webp' },
+                { id: 5, name: '上等沉船手镯', price: 28500, fixed: true, icon: './icons/szhq.webp' },
+                { id: 6, name: '沉船手镯', price: 9000, fixed: true, icon: './icons/sz.webp' },
+                { id: 7, name: '上等沉船戒指', price: 27000, fixed: true, icon: './icons/jzhq.webp' },
+                { id: 8, name: '沉船戒指', price: 8000, fixed: true, icon: './icons/jz.webp' },
             ];
         }
     }
