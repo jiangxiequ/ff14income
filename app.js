@@ -95,7 +95,8 @@ class MonthlyGameManager {
             return `<i class="${icon}"></i>`;
         }
         
-        if (typeof icon === 'string' && (icon.includes('.png') || icon.includes('.jpg') || icon.includes('.svg') || icon.includes('.gif'))) {
+        if (typeof icon === 'string' && (icon.includes('.png') || icon.includes('.jpg') || 
+        icon.includes('.svg') || icon.includes('.gif') || icon.includes('.webp'))){
             return `<img src="${icon}" alt="icon" onerror="this.style.display='none'">`;
         }
         
