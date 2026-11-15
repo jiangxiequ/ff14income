@@ -656,7 +656,7 @@ class MonthlyGameManager {
             // 3. 如果当前月已经有数量不为 0 的数据了，提醒一下
             const currentTotal = this.currentItems.reduce((sum, item) => sum + (item.count || 0), 0);
             if (currentTotal > 0) {
-                if (!confirm(`当前月份 (${this.getMonthLabel(this.currentMonth)}) 已经有数据了，拉取会覆盖当前数据，确定吗？`)) return;
+                if (!confirm(`当前月份 (${this.getMonthLabel(this.currentMonth)}) 已经有数据了，复制后会覆盖【固定项】外的数据，确定吗？`)) return;
             }
 
             // 4. 执行复制：把上个月复制到当前月
