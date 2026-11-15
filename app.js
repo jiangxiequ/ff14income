@@ -235,11 +235,13 @@ class MonthlyGameManager {
         }
     }
 
-        switchToMonth(month) {
+    switchToMonth(month) {
         if (!this.allData[month]) {
+            // 如果月份不存在，提示并创建
             if (confirm(`月份 ${this.getMonthLabel(month)} 不存在，是否创建？`)) {
                 this.initMonth(month);
             } else {
+                // 取消则切换到当前月份
                 this.switchToMonth(this.getCurrentMonth());
             }
             return;
@@ -248,16 +250,19 @@ class MonthlyGameManager {
         this.currentMonth = month;
         let items = this.allData[month].items || [];
 
-        // ===== 新增：自动补齐和更新固定物品 =====
+        // ==========================================
+        // 核心修复：每次切换月份时，自动同步最新的固定物品
+        // 这样老数据也能补齐你新加的3个物品，且更新价格
+        // ==========================================
         let hasChanges = false;
         FIXED_ITEMS.forEach(fixedItem => {
             const existingItem = items.find(i => i.id === fixedItem.id && i.fixed);
             if (!existingItem) {
-                // 如果老数据里没有这个新固定物品，加进去
+                // 如果旧月份没有这个物品（比如新加的3个），补进去，数量设为0
                 items.push({ ...fixedItem, count: 0 });
                 hasChanges = true;
             } else {
-                // 如果老数据里有，但名字、价格、图标变了，同步更新（但保留数量）
+                // 如果已经有了，检查价格、名字、图标是否更新了，更新它们但保留数量
                 if (existingItem.name !== fixedItem.name || 
                     existingItem.price !== fixedItem.price || 
                     existingItem.icon !== fixedItem.icon) {
@@ -271,9 +276,9 @@ class MonthlyGameManager {
 
         if (hasChanges) {
             this.allData[month].items = items;
-            this.saveToStorage(); // 更新完马上保存
+            this.saveToStorage();
         }
-        // ==================================
+        // ==========================================
 
         this.currentItems = items;
         this.currentNextId = this.allData[month].nextId || 1;
